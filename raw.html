@@ -1,5 +1,31 @@
 <!DOCTYPE html>
 <html>
-<head><title>raw</title></head>
-<body><script src="raw.js"></script></body>
+<head>
+    <meta charset="UTF-8">
+    <title>raw</title>
+</head>
+<body>
+    <script>
+        const path = window.location.pathname;
+        const parts = path.split('/raw/');
+        
+        if (parts.length > 1) {
+            const encoded = parts[1];
+            try {
+                const content = decodeURIComponent(escape(atob(encoded)));
+                // Создаем blob с правильным content-type
+                const blob = new Blob([content], { type: 'text/plain; charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                
+                // Очищаем body и перенаправляем на blob URL
+                document.body.innerHTML = '';
+                window.location.replace(url);
+            } catch(e) {
+                document.body.textContent = 'Error: Invalid content';
+            }
+        } else {
+            document.body.textContent = 'Error: No content';
+        }
+    </script>
+</body>
 </html>
