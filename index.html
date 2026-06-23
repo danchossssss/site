@@ -5,54 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secret Editor</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, sans-serif;
             background: #0d1117;
             color: #c9d1d9;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            margin: 0;
             padding: 20px;
         }
-        
-        .hidden {
-            display: none !important;
-        }
-        
-        .login-container, .editor-container {
+        .container {
             background: #161b22;
             border: 1px solid #30363d;
             border-radius: 6px;
             padding: 30px;
             width: 100%;
             max-width: 800px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
         }
-        
         h1 {
             color: #58a6ff;
-            margin-bottom: 20px;
-            font-size: 24px;
+            margin: 0 0 20px 0;
         }
-        
-        input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            background: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            color: #c9d1d9;
-            font-size: 16px;
-            margin-bottom: 15px;
-        }
-        
         textarea {
             width: 100%;
             min-height: 400px;
@@ -61,227 +36,94 @@
             border: 1px solid #30363d;
             border-radius: 6px;
             color: #c9d1d9;
-            font-family: 'Courier New', monospace;
+            font-family: monospace;
             font-size: 14px;
             resize: vertical;
             margin-bottom: 15px;
+            box-sizing: border-box;
         }
-        
         button {
             background: #238636;
-            color: #ffffff;
+            color: white;
             border: 1px solid #2ea043;
-            padding: 12px 24px;
+            padding: 10px 20px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: background 0.2s;
+            font-size: 14px;
             margin-right: 10px;
         }
-        
         button:hover {
             background: #2ea043;
         }
-        
-        .logout-btn {
-            background: #21262d;
-            border: 1px solid #30363d;
+        .hidden {
+            display: none;
         }
-        
-        .logout-btn:hover {
-            background: #30363d;
-        }
-        
-        .error {
-            color: #f85149;
-            margin-bottom: 15px;
+        .message {
             padding: 10px;
-            background: #490202;
             border-radius: 6px;
-            border: 1px solid #f85149;
+            margin-top: 10px;
         }
-        
         .success {
-            color: #3fb950;
-            margin-bottom: 15px;
-            padding: 10px;
             background: #04260f;
-            border-radius: 6px;
             border: 1px solid #3fb950;
+            color: #3fb950;
         }
-        
-        .raw-url {
+        .error {
+            background: #490202;
+            border: 1px solid #f85149;
+            color: #f85149;
+        }
+        #rawUrl {
             background: #0d1117;
             border: 1px solid #30363d;
             border-radius: 6px;
-            padding: 15px;
-            margin: 10px 0;
+            padding: 10px;
+            margin-top: 10px;
             word-break: break-all;
-            font-family: 'Courier New', monospace;
+            font-family: monospace;
             font-size: 12px;
             color: #7ee787;
-        }
-        
-        .info-text {
-            color: #8b949e;
-            font-size: 14px;
-            margin: 10px 0;
-        }
-        
-        .button-group {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .copy-btn {
-            background: #1f6feb;
-            border: 1px solid #388bfd;
-            font-size: 14px;
-            padding: 8px 16px;
-        }
-        
-        .copy-btn:hover {
-            background: #388bfd;
         }
     </style>
 </head>
 <body>
-    <div id="loginForm" class="login-container">
-        <h1>🔐 Введите пароль</h1>
-        <input type="password" id="passwordInput" placeholder="Введите пароль...">
-        <button onclick="checkPassword()">Войти</button>
-        <div id="loginError" class="error hidden"></div>
-    </div>
-    
-    <div id="editorForm" class="editor-container hidden">
-        <h1>📝 Редактор кода</h1>
-        <textarea id="codeEditor" placeholder="Введите ваш код или текст здесь..."></textarea>
-        <div class="button-group">
-            <button onclick="saveContent()">💾 Save</button>
-            <button class="logout-btn" onclick="logout()">🚪 Выйти</button>
-        </div>
-        <div id="saveMessage" class="hidden"></div>
-        <div class="info-text">🔗 Raw URL для внешних запросов:</div>
-        <div id="rawUrl" class="raw-url">Загрузка...</div>
-        <button class="copy-btn" onclick="copyRawUrl()">📋 Копировать URL</button>
+    <div class="container">
+        <h1>📝 Редактор</h1>
+        <textarea id="editor" placeholder="Введите текст..."></textarea>
+        <button onclick="save()">💾 Сохранить</button>
+        <div id="message"></div>
+        <p style="margin-top: 20px; color: #8b949e;">Raw URL:</p>
+        <div id="rawUrl">Загрузка...</div>
     </div>
 
     <script>
-        const CORRECT_PASSWORD = 'YAEBALGITHUB';
-        const STORAGE_KEY = 'github_secret_content';
-        const AUTH_KEY = 'github_secret_auth';
+        const PASS = 'YAEBALGITHUB';
+        const KEY = 'secret_content';
 
-        function getPasswordFromURL() {
-            const params = new URLSearchParams(window.location.search);
-            return params.get('password');
-        }
+        document.getElementById('editor').value = localStorage.getItem(KEY) || '';
+        updateRawUrl();
 
-        function checkPassword() {
-            const password = document.getElementById('passwordInput').value;
-            
-            if (password === CORRECT_PASSWORD) {
-                localStorage.setItem(AUTH_KEY, 'true');
-                showEditor();
-                document.getElementById('loginError').classList.add('hidden');
-            } else {
-                document.getElementById('loginError').textContent = '❌ Неверный пароль!';
-                document.getElementById('loginError').classList.remove('hidden');
-            }
-        }
-
-        function showEditor() {
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('editorForm').classList.remove('hidden');
-            loadSavedContent();
+        function save() {
+            const content = document.getElementById('editor').value;
+            localStorage.setItem(KEY, content);
             updateRawUrl();
-        }
-
-        function loadSavedContent() {
-            const savedContent = localStorage.getItem(STORAGE_KEY);
-            if (savedContent) {
-                document.getElementById('codeEditor').value = savedContent;
-            }
-        }
-
-        function saveContent() {
-            const content = document.getElementById('codeEditor').value;
-            localStorage.setItem(STORAGE_KEY, content);
-            
-            const messageEl = document.getElementById('saveMessage');
-            messageEl.textContent = '✅ Сохранено успешно!';
-            messageEl.className = 'success';
-            messageEl.classList.remove('hidden');
-            
-            updateRawUrl();
-            
-            setTimeout(() => {
-                messageEl.classList.add('hidden');
-            }, 3000);
+            showMessage('✅ Сохранено!', 'success');
         }
 
         function updateRawUrl() {
-            const content = localStorage.getItem(STORAGE_KEY) || '';
-            const baseUrl = window.location.href.split('?')[0].replace('index.html', '');
-            // Кодируем контент в base64 для URL
+            const content = localStorage.getItem(KEY) || '';
             const encoded = btoa(unescape(encodeURIComponent(content)));
-            const rawUrl = `${baseUrl}raw.html?password=${CORRECT_PASSWORD}#${encoded}`;
-            document.getElementById('rawUrl').textContent = rawUrl;
+            const url = window.location.href.replace('index.html', '') + 'raw.html?p=' + PASS + '#' + encoded;
+            document.getElementById('rawUrl').textContent = url;
         }
 
-        function copyRawUrl() {
-            const rawUrl = document.getElementById('rawUrl').textContent;
-            navigator.clipboard.writeText(rawUrl).then(() => {
-                alert('✅ URL скопирован в буфер обмена!');
-            }).catch(() => {
-                // Fallback для старых браузеров
-                const textArea = document.createElement('textarea');
-                textArea.value = rawUrl;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                alert('✅ URL скопирован в буфер обмена!');
-            });
+        function showMessage(text, type) {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = 'message ' + type;
+            msg.classList.remove('hidden');
+            setTimeout(() => msg.classList.add('hidden'), 3000);
         }
-
-        function logout() {
-            localStorage.removeItem(AUTH_KEY);
-            document.getElementById('loginForm').classList.remove('hidden');
-            document.getElementById('editorForm').classList.add('hidden');
-            document.getElementById('passwordInput').value = '';
-            
-            if (window.history && window.history.pushState) {
-                const newURL = window.location.pathname;
-                window.history.pushState({}, '', newURL);
-            }
-        }
-
-        function isAuthenticated() {
-            return localStorage.getItem(AUTH_KEY) === 'true' || getPasswordFromURL() === CORRECT_PASSWORD;
-        }
-
-        window.onload = function() {
-            if (isAuthenticated()) {
-                showEditor();
-            } else {
-                document.getElementById('loginForm').classList.remove('hidden');
-            }
-            
-            // Проверяем URL пароль при загрузке
-            if (getPasswordFromURL() === CORRECT_PASSWORD) {
-                localStorage.setItem(AUTH_KEY, 'true');
-            }
-        };
-
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('passwordInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    checkPassword();
-                }
-            });
-        });
     </script>
 </body>
 </html>
