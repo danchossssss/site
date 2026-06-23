@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raw Content</title>
+    <style>
+        body {
+            background: #0d1117;
+            color: #c9d1d9;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+        }
+        
+        pre {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 20px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .error {
+            color: #f85149;
+            padding: 20px;
+            background: #490202;
+            border-radius: 6px;
+            border: 1px solid #f85149;
+        }
+    </style>
+</head>
+<body>
+    <div id="content"></div>
+
+    <script>
+        const CORRECT_PASSWORD = 'YAEBALGITHUB';
+        const STORAGE_KEY = 'github_secret_content';
+        
+        function getPasswordFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('password');
+        }
+        
+        function showRawContent() {
+            const password = getPasswordFromURL();
+            
+            if (password !== CORRECT_PASSWORD) {
+                document.getElementById('content').innerHTML = '<div class="error">❌ Неверный пароль</div>';
+                return;
+            }
+            
+            const content = localStorage.getItem(STORAGE_KEY);
+            
+            if (content === null) {
+                document.getElementById('content').innerHTML = '<div class="error">📄 Контент отсутствует</div>';
+            } else {
+                document.getElementById('content').innerHTML = `<pre>${escapeHtml(content)}</pre>`;
+            }
+        }
+        
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+        
+        window.onload = showRawContent;
+    </script>
+</body>
+</html>
