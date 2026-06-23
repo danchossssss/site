@@ -1,24 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"></head>
-<body>
 <script>
-var p = new URLSearchParams(window.location.search).get('p');
-if(p === 'YAEBALGITHUB') {
-    var h = window.location.hash.substring(1);
-    if(h) {
-        try {
-            var content = decodeURIComponent(escape(atob(h)));
-            document.body.textContent = content;
-        } catch(e) {
-            document.body.textContent = 'Error: Invalid data';
-        }
-    } else {
-        document.body.textContent = 'No content';
-    }
-} else {
-    document.body.textContent = 'Wrong password';
+var content = window.location.hash.substring(1);
+if(content) {
+    document.body.textContent = atob(content);
 }
 </script>
-</body>
-</html>
