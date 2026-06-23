@@ -111,10 +111,22 @@
             border: 1px solid #3fb950;
         }
         
-        .info {
+        .raw-url {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 10px 0;
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #7ee787;
+        }
+        
+        .info-text {
             color: #8b949e;
             font-size: 14px;
-            margin-bottom: 20px;
+            margin: 10px 0;
         }
     </style>
 </head>
@@ -134,6 +146,8 @@
             <button class="logout-btn" onclick="logout()">🚪 Выйти</button>
         </div>
         <div id="saveMessage" class="hidden"></div>
+        <div class="info-text">🔗 Raw URL (скопируйте для внешних запросов):</div>
+        <div id="rawUrl" class="raw-url"></div>
     </div>
 
     <script src="script.js"></script>
