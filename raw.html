@@ -1,32 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Raw</title>
-</head>
-<body>
-    <script>
-        const CORRECT_PASSWORD = 'YAEBALGITHUB';
-        const STORAGE_KEY = 'github_secret_content';
-        
-        function getPasswordFromURL() {
-            const params = new URLSearchParams(window.location.search);
-            return params.get('password');
-        }
-        
-        const password = getPasswordFromURL();
-        
-        if (password !== CORRECT_PASSWORD) {
-            document.body.textContent = 'Error: Invalid password';
-        } else {
-            const content = localStorage.getItem(STORAGE_KEY);
-            if (content === null) {
-                document.body.textContent = '';
-            } else {
-                // Показываем только чистый текст, без HTML
-                document.body.textContent = content;
-            }
-        }
-    </script>
-</body>
+<html>
+<head><title>raw</title></head>
+<body><script src="raw.js"></script></body>
 </html>
