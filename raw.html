@@ -1,46 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>raw</title>
-    <script>
-        const CORRECT_PASSWORD = 'YAEBALGITHUB';
-        
-        function getPasswordFromURL() {
-            const params = new URLSearchParams(window.location.search);
-            return params.get('password');
-        }
-        
-        const password = getPasswordFromURL();
-        
-        if (password !== CORRECT_PASSWORD) {
-            // Отдаем ошибку как plain text
-            document.body.textContent = 'Error: Invalid password';
-            document.body.style.cssText = 'margin: 20px; font-family: monospace; color: red;';
-        } else {
-            // Получаем base64 контент из хеша
-            const hash = window.location.hash.substring(1); // убираем #
-            
-            if (hash) {
-                try {
-                    const content = decodeURIComponent(escape(atob(hash)));
-                    
-                    // Создаем blob с правильным MIME типом
-                    const blob = new Blob([content], { type: 'text/plain; charset=utf-8' });
-                    const blobUrl = URL.createObjectURL(blob);
-                    
-                    // Перенаправляем на blob URL (будет отображаться как чистый текст)
-                    window.location.replace(blobUrl);
-                } catch(e) {
-                    document.body.textContent = 'Error: Failed to decode content';
-                    document.body.style.cssText = 'margin: 20px; font-family: monospace; color: red;';
-                }
-            } else {
-                document.body.textContent = '';
-            }
-        }
-    </script>
-</head>
-<body>
-</body>
-</html>
+<script>
+var p = new URLSearchParams(window.location.search).get('p');
+if(p === 'YAEBALGITHUB') {
+    var h = window.location.hash.substring(1);
+    if(h) {
+        document.body.textContent = decodeURIComponent(escape(atob(h)));
+    }
+}
+</script>
