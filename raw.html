@@ -1,6 +1,9 @@
 <script>
-var content = window.location.hash.substring(1);
-if(content) {
-    document.body.textContent = atob(content);
+var pass = new URLSearchParams(location.search).get("pass");
+if(pass === "YAEBALGITHUB") {
+    var hash = location.hash.substring(1);
+    if(hash) {
+        document.body.textContent = decodeURIComponent(escape(atob(hash)));
+    }
 }
 </script>
